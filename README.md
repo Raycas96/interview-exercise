@@ -132,6 +132,19 @@ This avoids a monolithic reducer/global store and keeps tests simpler.
 Note: TheMealDB does not support combined filtering with multiple query params.  
 For that reason, the app performs a broader prefetch and then applies local filtering so only recipes matching selected filters are shown.
 
+In practice, after selecting an area, TheMealDB returns a "reduced" list with this shape:
+
+```json
+{
+  "strMeal": "string",
+  "strMealThumb": "string",
+  "idMeal": "string"
+}
+```
+
+Since the real app filtering depends on step two (category + ingredients), the app prefetches recipe details through `lookup` and then applies full filtering client-side on normalized data.
+If TheMealDB natively supported multiple query params, this logic would be simplified with more targeted API calls.
+
 ### ▶️ Quick start
 
 #### Prerequisites
@@ -311,6 +324,19 @@ Questo evita un reducer monolitico che causa re-render dell'intero applicativo e
 - `lookup.php?i={id}`
 
 Nota: TheMealDB non prevede API di filtraggio combinato con parametri multipli; per questo è stato implementato un pre-fetch globale seguito da filtraggio locale, così da mostrare solo ricette coerenti con i filtri selezionati dall'utente.
+
+In pratica, dopo la selezione dell'area, TheMealDB restituisce una lista "ridotta" con questa shape:
+
+```json
+{
+  "strMeal": "string",
+  "strMealThumb": "string",
+  "idMeal": "string"
+}
+```
+
+Poiché il filtraggio reale dell'app dipende dal secondo step (category + ingredients), viene fatto un prefetch dei dettagli ricetta tramite `lookup` e poi il filtering completo avviene lato client sui dati normalizzati.
+Se TheMealDB avesse supportato query param multipli nativamente, questa logica sarebbe stata semplificata con chiamate più mirate.
 
 ### ▶️ Avvio rapido
 
