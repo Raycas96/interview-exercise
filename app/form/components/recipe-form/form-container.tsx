@@ -43,9 +43,12 @@ export const FormContainer = ({
               </Tab>
             ))}
           </TabList>
-          <TabPanels className="mt-3">
+          <TabPanels className="mt-3 bg-transparent">
             {TABS.map(({ name }) => (
-              <TabPanel key={name} className="rounded-xl bg-white/5 p-3 sm:p-4">
+              <TabPanel
+                key={name}
+                className="rounded-xl bg-transparent p-3 sm:p-4"
+              >
                 {name === "Area" ? (
                   <AreaSelect
                     areas={areasList}

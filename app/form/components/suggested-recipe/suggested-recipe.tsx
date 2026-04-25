@@ -50,7 +50,10 @@ export const SuggestedRecipe = ({
       <h2 className="pb-3 text-sm font-bold sm:text-base md:text-center">
         Based on your preferences, we think you&apos;ll like the following
       </h2>
-      <RecipeCard recipe={selectedRecipe} />
+      <RecipeCard
+        recipe={selectedRecipe}
+        selectedInputs={{ area, category, ingredients }}
+      />
     </div>
   );
 };

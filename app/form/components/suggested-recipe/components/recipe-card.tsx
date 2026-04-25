@@ -12,8 +12,13 @@ import { SaveRecipe } from "./save-recipe";
 
 interface RecipeCardProps {
   recipe: Recipe;
+  selectedInputs: {
+    area: string | null;
+    category: string | null;
+    ingredients: string[];
+  };
 }
-export const RecipeCard = ({ recipe }: RecipeCardProps) => {
+export const RecipeCard = ({ recipe, selectedInputs }: RecipeCardProps) => {
   return (
     <div className="mx-auto w-full max-w-xl">
       <Card title={recipe.name}>
@@ -84,7 +89,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
             )}
           </Disclosure>
 
-          <SaveRecipe recipe={recipe} />
+          <SaveRecipe recipe={recipe} selectedInputs={selectedInputs} />
         </div>
       </Card>
     </div>

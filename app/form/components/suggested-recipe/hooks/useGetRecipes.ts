@@ -47,9 +47,6 @@ export const useGetRecipes = ({
 
   // effect to filter the recipes based on the category and ingredient
   useEffect(() => {
-    if (!recipes) {
-      return;
-    }
     const filteredRecipes = recipes.filter((recipe) => {
       if (category && ingredients.length > 0) {
         return (
