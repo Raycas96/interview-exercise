@@ -22,16 +22,19 @@ export function Header() {
               Recipe Recommender
             </Link>
 
-            <nav className="hidden items-center gap-6 md:flex">
-              {menuItems.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-sm text-muted transition-colors hover:text-brand"
-                >
-                  {link.name}
-                </Link>
-              ))}
+            <nav className="hidden md:block" aria-label="Main navigation">
+              <ul className="flex items-center gap-6">
+                {menuItems.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted transition-colors hover:text-brand"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </nav>
 
             <DisclosureButton
@@ -47,17 +50,20 @@ export function Header() {
           </div>
 
           <DisclosurePanel className="border-t border-border px-4 py-3 md:hidden">
-            <div className="flex flex-col gap-3">
-              {menuItems.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-sm text-muted transition-colors hover:text-brand"
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
+            <nav aria-label="Mobile navigation">
+              <ul className="flex flex-col gap-3">
+                {menuItems.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted transition-colors hover:text-brand"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </DisclosurePanel>
         </>
       )}
