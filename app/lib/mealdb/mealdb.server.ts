@@ -1,4 +1,4 @@
-import { MealDbError } from "../errors/mealdb-error";
+import { MealDbError } from "@/lib/api/mealdb-error";
 import {
   MealDbAreaResponse,
   MealDbCategoryResponse,

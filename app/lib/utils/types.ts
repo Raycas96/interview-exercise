@@ -1,5 +1,3 @@
-import { Recipe } from "../mealdb/types";
-
 export interface HistoryRecipe {
   recipeId: string;
   title: string;
