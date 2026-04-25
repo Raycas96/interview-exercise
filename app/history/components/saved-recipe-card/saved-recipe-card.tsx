@@ -3,7 +3,6 @@
 import { Card } from "@/app/components/card";
 import { FeedbackDialog } from "@/app/components/feedback-dialog";
 import { PreferenceFeedback } from "@/app/components/preference-feedback";
-import { updateRecipeFeedbackInHistory } from "@/app/lib/utils/history";
 import { formatDate } from "@/utils/date";
 import { HistoryRecipe } from "@/utils/types";
 import Image from "next/image";
@@ -11,9 +10,13 @@ import { useMemo, useState } from "react";
 
 interface SavedRecipeCardProps {
   recipe: HistoryRecipe;
+  onPreferenceChange: (recipeId: string, liked: boolean) => void;
 }
 
-export const SavedRecipeCard = ({ recipe }: SavedRecipeCardProps) => {
+export const SavedRecipeCard = ({
+  recipe,
+  onPreferenceChange,
+}: SavedRecipeCardProps) => {
   const [liked, setLiked] = useState(recipe.liked);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -34,7 +37,7 @@ export const SavedRecipeCard = ({ recipe }: SavedRecipeCardProps) => {
 
   const saveFeedback = (nextLiked: boolean) => {
     setLiked(nextLiked);
-    updateRecipeFeedbackInHistory(recipe.recipeId, nextLiked);
+    onPreferenceChange(recipe.recipeId, nextLiked);
     setDialogMessage(
       nextLiked
         ? "Great! We updated this recipe as liked in your history."

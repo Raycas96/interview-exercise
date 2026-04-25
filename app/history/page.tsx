@@ -4,7 +4,8 @@ import { SavedRecipeCard } from "@/app/history/components/saved-recipe-card";
 import { useGetSavedRecipes } from "@/app/history/hooks/useGetSavedRecipes";
 
 export default function History() {
-  const { savedRecipes, likedCount, dislikedCount } = useGetSavedRecipes();
+  const { savedRecipes, likedCount, dislikedCount, updateRecipePreference } =
+    useGetSavedRecipes();
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
@@ -36,10 +37,13 @@ export default function History() {
           history.
         </p>
       ) : (
-        <ul className="grid grid-cols-1 gap-4 sm:grid-col-1 md:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {savedRecipes.map((recipe) => (
             <li key={recipe.recipeId}>
-              <SavedRecipeCard recipe={recipe} />
+              <SavedRecipeCard
+                recipe={recipe}
+                onPreferenceChange={updateRecipePreference}
+              />
             </li>
           ))}
         </ul>
