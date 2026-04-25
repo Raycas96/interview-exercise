@@ -55,10 +55,31 @@ export async function getIngredients() {
   return fetchTheMealDbData<MealDbIngredientResponse>("/list.php?i=list");
 }
 
-export async function getRecipesByArea(area: string) {
-  return fetchTheMealDbData<MealDbRecipesResponse>(`/filter.php?a=${area}`);
+// this funcion will take a little bit longer and it will have the n+1 problem
+// but since we do not have the API premium this will allow us
+// to get all the recipe details and filter them using all the fileds
+// from the frontend
+export async function getRecipesByArea(
+  area: string,
+): Promise<MealDbRecipesResponse> {
+  const recipesByArea = await fetchTheMealDbData<MealDbRecipesResponse>(
+    `/filter.php?a=${encodeURIComponent(area)}`,
+  );
+  const meals = recipesByArea.meals ?? [];
+  const recipes = await Promise.all(
+    meals.map(async (meal) => {
+      const recipeDetails = await getRecipeById(meal.idMeal);
+      return recipeDetails;
+    }),
+  );
+
+  return {
+    meals: recipes
+      .map((recipe) => recipe.meals?.[0] ?? null)
+      .filter((meal) => meal !== null),
+  };
 }
 
 export async function getRecipeById(id: string) {
-  return fetchTheMealDbData<MealDbRecipesResponse>(`lookup.php?i=${id}`);
+  return fetchTheMealDbData<MealDbRecipesResponse>(`/lookup.php?i=${id}`);
 }

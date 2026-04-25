@@ -16,9 +16,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    const areas = await getRecipesByArea(area);
+    const recipes = await getRecipesByArea(area);
     return NextResponse.json({
-      data: fromMealDbRecipesResponseToRecipes(areas),
+      data: fromMealDbRecipesResponseToRecipes(recipes),
     });
   } catch (e) {
     return toApiErrorResponse(e);
