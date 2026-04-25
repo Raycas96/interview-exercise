@@ -1,6 +1,8 @@
 import { getRecipesByArea } from "@/lib/mealdb/client/get-recipes-by-area";
 import { Recipe } from "@/lib/mealdb/types";
-import { useCallback, useEffect, useState } from "react";
+import { isAbortError } from "@/lib/api/utils";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 interface UseGetRecipesProps {
   area: string | null;
   category: string | null;
@@ -15,34 +17,57 @@ export const useGetRecipes = ({
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const requestIdRef = useRef(0);
 
-  const fetchRecipes = useCallback(async () => {
-    if (!area) {
-      return;
-    }
+  const fetchRecipes = useCallback(
+    async (requestInit?: RequestInit) => {
+      if (!area) {
+        return;
+      }
 
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await getRecipesByArea(area);
-      setRecipes(response);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "An unknown error occurred",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [area]);
+      const requestId = ++requestIdRef.current;
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await getRecipesByArea(area, requestInit);
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+        setRecipes(response);
+      } catch (error) {
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+
+        if (isAbortError(error)) {
+          return;
+        }
+
+        setError(
+          error instanceof Error ? error.message : "An unknown error occurred",
+        );
+      } finally {
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+        }
+      }
+    },
+    [area],
+  );
 
   // effect to fetch the recipes based on the area
   useEffect(() => {
     if (!area) {
       return;
     }
+    const abortController = new AbortController();
     queueMicrotask(() => {
-      void fetchRecipes();
+      void fetchRecipes({ signal: abortController.signal });
     });
+
+    return () => {
+      abortController.abort();
+    };
   }, [area, fetchRecipes]);
 
   // effect to filter the recipes based on the category and ingredient

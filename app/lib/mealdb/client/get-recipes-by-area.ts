@@ -8,9 +8,13 @@ interface RecipesByAreaResponse {
   };
 }
 
-export async function getRecipesByArea(area: string): Promise<Recipe[]> {
+export async function getRecipesByArea(
+  area: string,
+  init?: RequestInit,
+): Promise<Recipe[]> {
   const response = await fetch(
     `/api/mealdb/recipe-by-area?area=${encodeURIComponent(area)}`,
+    init,
   );
   const json = (await response.json()) as RecipesByAreaResponse;
 

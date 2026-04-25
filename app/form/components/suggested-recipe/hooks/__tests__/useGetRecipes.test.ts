@@ -32,7 +32,12 @@ describe("useGetRecipes", () => {
       expect(result.current.selectedRecipe?.id).toBe("2");
     });
 
-    expect(mockedGetRecipesByArea).toHaveBeenCalledWith("Italian");
+    expect(mockedGetRecipesByArea).toHaveBeenCalledWith(
+      "Italian",
+      expect.objectContaining({
+        signal: expect.any(AbortSignal),
+      }),
+    );
     expect(result.current.error).toBeNull();
   });
 
@@ -99,6 +104,25 @@ describe("useGetRecipes", () => {
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBe("API error");
+    });
+  });
+
+  it("does not expose aborted requests as errors", async () => {
+    const abortError = new Error("signal is aborted without reason");
+    abortError.name = "AbortError";
+    mockedGetRecipesByArea.mockRejectedValue(abortError);
+
+    const { result } = renderHook(() =>
+      useGetRecipes({
+        area: "Indian",
+        category: null,
+        ingredients: [],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeNull();
     });
   });
 });
