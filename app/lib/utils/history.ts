@@ -35,12 +35,12 @@ export const getStoredHistoryRecipes = (): HistoryRecipe[] => {
 };
 
 export const sortHistoryByLatest = (
-  recipesA: HistoryRecipe,
-  recipesB: HistoryRecipe,
+  recipeA: HistoryRecipe,
+  recipeB: HistoryRecipe,
 ): number => {
   return (
-    new Date(recipesB.timestamp).getTime() -
-    new Date(recipesA.timestamp).getTime()
+    new Date(recipeB.timestamp).getTime() -
+    new Date(recipeA.timestamp).getTime()
   );
 };
 
