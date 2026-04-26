@@ -9,6 +9,9 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { SaveRecipe } from "./save-recipe";
 import { FallbackImage } from "@/components/fallback-image";
+import Link from "next/link";
+import { Button } from "@/components/button";
+import { RecipeMetaBadges } from "@/components/recipe-meta-badges";
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -17,8 +20,15 @@ interface RecipeCardProps {
     category: string | null;
     ingredients: string[];
   };
+  onNewIdea: () => void;
+  showNewIdea: boolean;
 }
-export const RecipeCard = ({ recipe, selectedInputs }: RecipeCardProps) => {
+export const RecipeCard = ({
+  recipe,
+  selectedInputs,
+  onNewIdea,
+  showNewIdea,
+}: RecipeCardProps) => {
   return (
     <div className="mx-auto w-full max-w-xl">
       <Card title={recipe.name}>
@@ -30,13 +40,20 @@ export const RecipeCard = ({ recipe, selectedInputs }: RecipeCardProps) => {
             sizes="(min-width: 640px) 480px, 100vw"
           />
 
-          <div className="flex items-center gap-2 text-xs">
-            <span className="rounded-full bg-brand/15 px-2 py-1 text-brand">
-              {recipe.area}
-            </span>
-            <span className="rounded-full bg-action/15 px-2 py-1 text-action">
-              {recipe.category}
-            </span>
+          <RecipeMetaBadges area={recipe.area} category={recipe.category} />
+
+          <div className="flex flex-wrap gap-2">
+            {showNewIdea ? (
+              <Button type="button" variant="secondary" onClick={onNewIdea}>
+                New Idea
+              </Button>
+            ) : null}
+            <Link
+              href={`/recipe/${recipe.id}`}
+              className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface"
+            >
+              View details
+            </Link>
           </div>
 
           <Disclosure as="div" className="rounded-lg border border-border/80">

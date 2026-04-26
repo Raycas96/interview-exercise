@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getRecipesByArea } from "@/lib/mealdb/client/get-recipes-by-area";
 import { RECIPES_FIXTURE } from "./useGetRecipes.fixtures";
@@ -66,6 +66,31 @@ describe("useGetRecipes", () => {
     rerender({
       category: "Pasta",
       ingredients: ["Tomato"],
+    });
+
+    await waitFor(() => {
+      expect(result.current.selectedRecipe?.id).toBe("2");
+    });
+  });
+
+  it("returns a new idea with same filters when available", async () => {
+    mockedGetRecipesByArea.mockResolvedValue(RECIPES_FIXTURE);
+
+    const { result } = renderHook(() =>
+      useGetRecipes({
+        area: "Indian",
+        category: null,
+        ingredients: [],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.selectedRecipe?.id).toBe("1");
+      expect(result.current.canSuggestAnother).toBe(true);
+    });
+
+    act(() => {
+      result.current.suggestAnother();
     });
 
     await waitFor(() => {

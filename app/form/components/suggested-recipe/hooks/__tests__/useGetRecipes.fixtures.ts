@@ -9,8 +9,6 @@ export const RECIPES_FIXTURE: Recipe[] = [
     category: "Vegetarian",
     area: "Indian",
     instructions: "Cook everything.",
-    tags: null,
-    youtubeUrl: null,
     ingredients: [
       { name: "Garlic", measure: "1 clove" },
       { name: "Tomato", measure: "1" },
@@ -25,8 +23,6 @@ export const RECIPES_FIXTURE: Recipe[] = [
     category: "Pasta",
     area: "Italian",
     instructions: "Boil and mix.",
-    tags: null,
-    youtubeUrl: null,
     ingredients: [
       { name: "Tomato", measure: "2" },
       { name: "Basil", measure: "3 leaves" },

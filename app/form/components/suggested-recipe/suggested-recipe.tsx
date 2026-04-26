@@ -16,7 +16,14 @@ export const SuggestedRecipe = ({
   category,
   ingredients,
 }: SuggestedRecipeProps) => {
-  const { loading, error, retry, selectedRecipe } = useGetRecipes({
+  const {
+    loading,
+    error,
+    retry,
+    selectedRecipe,
+    suggestAnother,
+    canSuggestAnother,
+  } = useGetRecipes({
     area,
     category,
     ingredients,
@@ -33,7 +40,12 @@ export const SuggestedRecipe = ({
     return (
       <Card title="Error" description={error}>
         <div className="flex justify-center w-full">
-          <Button type="button" onClick={retry}>
+          <Button
+            type="button"
+            onClick={() => {
+              retry();
+            }}
+          >
             Retry
           </Button>
         </div>
@@ -53,6 +65,8 @@ export const SuggestedRecipe = ({
       <RecipeCard
         recipe={selectedRecipe}
         selectedInputs={{ area, category, ingredients }}
+        onNewIdea={suggestAnother}
+        showNewIdea={canSuggestAnother}
       />
     </div>
   );

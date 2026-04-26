@@ -6,7 +6,6 @@ export interface Recommendation {
   image: string;
   category: string;
   area: string;
-  sourceUrl: string;
 }
 
 export enum ActionType {

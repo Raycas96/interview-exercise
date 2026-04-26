@@ -1,7 +1,7 @@
 import { getRecipesByArea } from "@/lib/mealdb/client/get-recipes-by-area";
 import { Recipe } from "@/lib/mealdb/types";
 import { isAbortError } from "@/lib/api/utils";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface UseGetRecipesProps {
   area: string | null;
@@ -70,9 +70,8 @@ export const useGetRecipes = ({
     };
   }, [area, fetchRecipes]);
 
-  // effect to filter the recipes based on the category and ingredient
-  useEffect(() => {
-    const filteredRecipes = recipes.filter((recipe) => {
+  const filteredRecipes = useMemo(() => {
+    return recipes.filter((recipe) => {
       if (category && ingredients.length > 0) {
         return (
           recipe.category === category &&
@@ -91,27 +90,53 @@ export const useGetRecipes = ({
       }
       return true;
     });
-    if (filteredRecipes.length === 1) {
-      queueMicrotask(() => {
-        setSelectedRecipe(filteredRecipes[0]);
-      });
-    } else if (filteredRecipes.length > 1) {
-      queueMicrotask(() => {
-        setSelectedRecipe(
-          filteredRecipes[Math.floor(Math.random() * filteredRecipes.length)],
-        );
-      });
-    } else {
-      queueMicrotask(() => {
-        setSelectedRecipe(null);
-      });
-    }
   }, [recipes, category, ingredients]);
+
+  const pickRandomRecipe = useCallback(
+    (excludedRecipeId: string | undefined) => {
+      if (filteredRecipes.length === 0) {
+        setSelectedRecipe(null);
+        return;
+      }
+
+      if (filteredRecipes.length === 1) {
+        setSelectedRecipe(filteredRecipes[0]);
+        return;
+      }
+
+      const eligibleRecipes = filteredRecipes.filter(
+        (recipe) => recipe.id !== excludedRecipeId,
+      );
+
+      setSelectedRecipe(
+        eligibleRecipes[Math.floor(Math.random() * eligibleRecipes.length)],
+      );
+    },
+    [filteredRecipes],
+  );
+
+  // effect to select one recipe when filters change
+  useEffect(() => {
+    queueMicrotask(() => {
+      pickRandomRecipe(selectedRecipe?.id);
+    });
+    // in this case we do not need the full array otherwhise we got an infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickRandomRecipe]);
+
+  const suggestAnother = useCallback(() => {
+    const currentId = selectedRecipe?.id;
+    if (currentId) {
+      pickRandomRecipe(currentId);
+    }
+  }, [pickRandomRecipe, selectedRecipe?.id]);
 
   return {
     loading,
     error,
     retry: fetchRecipes,
     selectedRecipe,
+    suggestAnother,
+    canSuggestAnother: filteredRecipes.length > 1,
   };
 };
