@@ -101,7 +101,7 @@ This avoids a monolithic reducer/global store and keeps tests simpler.
 
 #### 3) SSR + client split
 
-- `app/form/page.tsx` (Server Component): preloads metadata + hydrates initial form state from query params
+- `app/recommender/page.tsx` (Server Component): preloads metadata + hydrates initial form state from query params
 - `form-experience.tsx` (Client Component): runtime interactions + URL sync (`router.replace`)
 
 #### 4) Reusable UI primitives
@@ -313,7 +313,7 @@ Questo evita un reducer monolitico che causa re-render dell'intero applicativo e
 
 #### 3) SSR + Client split
 
-- `app/form/page.tsx` (Server Component): fetch preventivo di categorie/metadata + hydration iniziale stato form da query params.
+- `app/recommender/page.tsx` (Server Component): fetch preventivo di categorie/metadata + hydration iniziale stato form da query params.
 - `form-experience.tsx` (Client Component): interazioni utente + sincronizzazione URL con `router.replace`.
 
 #### 4) UI primitives riutilizzabili

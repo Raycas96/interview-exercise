@@ -8,14 +8,16 @@ import {
   fromMealDbCategoryResponseToCategory,
   fromMealDbIngredientResponseToIngredient,
 } from "@/lib/mealdb/adapters";
-import { FormExperience } from "./form-experience";
-import { toInitialFormStateFromQuery } from "./utils/query-state";
+import { FormExperience } from "../form/form-experience";
+import { toInitialFormStateFromQuery } from "../form/utils/query-state";
 
-interface FormPageProps {
+interface RecommenderPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function Form({ searchParams }: FormPageProps) {
+export default async function Recommender({
+  searchParams,
+}: RecommenderPageProps) {
   const [areas, categories, ingredients] = await Promise.all([
     getAreas(),
     getCategories(),
@@ -37,7 +39,7 @@ export default async function Form({ searchParams }: FormPageProps) {
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
       <h1 className="text-center text-2xl font-bold sm:text-3xl">
-        Recipe Form
+        Recipe Recommender
       </h1>
       <FormExperience
         areas={formattedAreas}

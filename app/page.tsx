@@ -14,7 +14,7 @@ export default function Home() {
         >
           <div className="flex gap-3 justify-center">
             <Link
-              href="/form"
+              href="/recommender"
               className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-hover"
             >
               Find a recipe

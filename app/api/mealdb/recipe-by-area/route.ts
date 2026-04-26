@@ -2,7 +2,7 @@ import { getRecipesByArea } from "@/lib/mealdb/mealdb.server";
 import { toApiErrorResponse } from "@/lib/api/to-api-error-response";
 import { MealDbError } from "@/lib/api/mealdb-error";
 import { toApiSuccessResponse } from "@/lib/api/to-api-success-response";
-import { fromMealDbRecipesResponseToRecipes } from "@/app/lib/mealdb/adapters/recipe.adapters";
+import { fromMealDbRecipesResponseToRecipes } from "@/lib/mealdb/adapters/recipe.adapters";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

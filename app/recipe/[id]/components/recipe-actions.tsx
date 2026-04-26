@@ -4,7 +4,7 @@ export const RecipeActions = () => {
   return (
     <div className="flex flex-wrap gap-2 justify-center">
       <Link
-        href="/form"
+        href="/recommender"
         className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface"
       >
         Back to recommender

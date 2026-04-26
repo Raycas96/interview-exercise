@@ -1,7 +1,7 @@
 export const menuItems = [
   {
     name: "Find a recipe",
-    href: "/form",
+    href: "/recommender",
   },
   {
     name: "Saved recipes",
