@@ -5,8 +5,8 @@ import { FeedbackDialog } from "@/app/components/feedback-dialog";
 import { PreferenceFeedback } from "@/app/components/preference-feedback";
 import { formatDate } from "@/utils/date";
 import { HistoryRecipe } from "@/utils/types";
-import Image from "next/image";
 import { useMemo, useState } from "react";
+import { FallbackImage } from "@/components/fallback-image";
 
 interface SavedRecipeCardProps {
   recipe: HistoryRecipe;
@@ -49,12 +49,11 @@ export const SavedRecipeCard = ({
   return (
     <Card title={recipe.title} padding="sm">
       <div className="flex flex-col gap-3">
-        <Image
+        <FallbackImage
           src={recipe.image}
           alt={recipe.title}
-          width={640}
-          height={360}
-          className="h-36 w-full rounded-xl object-cover md:h-40 lg:h-32"
+          containerClassName="h-36 md:h-40 lg:h-32"
+          sizes="(min-width: 1024px) 280px, (min-width: 768px) 45vw, 100vw"
         />
 
         <div className="flex flex-wrap items-center gap-2 text-xs">

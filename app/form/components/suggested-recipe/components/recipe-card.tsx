@@ -6,9 +6,9 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import Image from "next/image";
 import clsx from "clsx";
 import { SaveRecipe } from "./save-recipe";
+import { FallbackImage } from "@/components/fallback-image";
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -23,12 +23,11 @@ export const RecipeCard = ({ recipe, selectedInputs }: RecipeCardProps) => {
     <div className="mx-auto w-full max-w-xl">
       <Card title={recipe.name}>
         <div className="flex flex-col gap-4">
-          <Image
+          <FallbackImage
             src={recipe.thumbnail}
             alt={recipe.name}
-            width={480}
-            height={280}
-            className="h-44 w-full rounded-xl object-cover sm:h-52"
+            containerClassName="mx-auto h-44  sm:h-52 sm:w-full md:w-[80%] lg:w-[70%]"
+            sizes="(min-width: 640px) 480px, 100vw"
           />
 
           <div className="flex items-center gap-2 text-xs">
