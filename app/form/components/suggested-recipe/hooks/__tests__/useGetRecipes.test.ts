@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getRecipesByArea } from "@/lib/mealdb/client/get-recipes-by-area";
-import { RECIPES_FIXTURE } from "./useGetRecipes.fixtures";
+import { RECIPES_FIXTURE } from "../../test-utils/recipes-fixture";
 import { useGetRecipes } from "../useGetRecipes";
 
 vi.mock("@/lib/mealdb/client/get-recipes-by-area", () => ({
