@@ -1,5 +1,5 @@
 import { Area } from "@/lib/mealdb/types";
-import { SelectField } from "@/components/form/select-field";
+import { SelectField } from "@/components/select-field";
 import { SearchMode } from "./reducer";
 import { Recipe } from "@/lib/mealdb/types";
 import { NameRecipeSearch } from "./name-recipe-search";

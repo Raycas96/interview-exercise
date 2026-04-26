@@ -1,11 +1,4 @@
-import {
-  Description,
-  Field,
-  Label,
-  Radio,
-  RadioGroup,
-} from "@headlessui/react";
-import clsx from "clsx";
+import { RadioGroupField } from "@/components/radio-group-field";
 import { SearchMode } from "./reducer";
 
 interface SearchModeSelectorProps {
@@ -35,47 +28,14 @@ export function SearchModeSelector({
   onChange,
 }: SearchModeSelectorProps) {
   return (
-    <div>
-      <p className="text-sm/6 font-medium text-white">Search mode</p>
-      <p className="text-sm/6 text-white/50">
-        Choose whether to search with area flow or recipe name.
-      </p>
-      <RadioGroup
-        value={value}
-        onChange={onChange}
-        aria-label="Search mode"
-        className="mt-3 grid gap-2 sm:grid-cols-2"
-      >
-        {modeOptions.map((option) => (
-          <Field
-            key={option.value}
-            className={clsx(
-              "rounded-lg border border-border/80 bg-white/5 p-3",
-              "data-checked:border-brand data-checked:bg-brand/10",
-            )}
-          >
-            <div className="flex items-center gap-2 ">
-              <Radio
-                value={option.value}
-                className={clsx(
-                  "flex h-4 w-4 shrink-0 aspect-square items-center justify-center rounded-full border border-white/50 cursor-pointer",
-                  "data-checked:border-brand data-checked:bg-brand",
-                )}
-              >
-                <span className="size-1.5 rounded-full bg-background" />
-              </Radio>
-              <div>
-                <Label className="text-sm font-medium text-white">
-                  {option.label}
-                </Label>
-                <Description className="text-xs text-white/60">
-                  {option.description}
-                </Description>
-              </div>
-            </div>
-          </Field>
-        ))}
-      </RadioGroup>
-    </div>
+    <RadioGroupField
+      label="Search mode"
+      description="Choose whether to search with area flow or recipe name."
+      value={value}
+      options={modeOptions}
+      onChange={onChange}
+      ariaLabel="Search mode"
+      optionsClassName="sm:grid-cols-2"
+    />
   );
 }

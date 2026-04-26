@@ -2,10 +2,25 @@
 
 import { SavedRecipeCard } from "@/app/history/components/saved-recipe-card";
 import { useGetSavedRecipes } from "@/app/history/hooks/useGetSavedRecipes";
+import { useMemo, useState } from "react";
+import {
+  HistoryFilter,
+  type HistoryFilter as HistoryFilterType,
+} from "@/app/history/components/saved-recipe-card/components/history-filter";
 
 export default function History() {
+  const [activeFilter, setActiveFilter] = useState<HistoryFilterType>("all");
   const { savedRecipes, likedCount, dislikedCount, updateRecipePreference } =
     useGetSavedRecipes();
+  const filteredRecipes = useMemo(() => {
+    if (activeFilter === "liked") {
+      return savedRecipes.filter((recipe) => recipe.liked);
+    }
+    if (activeFilter === "disliked") {
+      return savedRecipes.filter((recipe) => !recipe.liked);
+    }
+    return savedRecipes;
+  }, [activeFilter, savedRecipes]);
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
@@ -27,7 +42,15 @@ export default function History() {
           <span className="rounded-full bg-action/15 px-2 py-1 text-action">
             No: {dislikedCount}
           </span>
+          <span className="rounded-full bg-surface px-2 py-1 text-muted">
+            Showing: {filteredRecipes.length}
+          </span>
         </div>
+
+        <HistoryFilter
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+        />
       </section>
 
       {savedRecipes.length === 0 ? (
@@ -36,9 +59,13 @@ export default function History() {
           use our magic algorithm to find a recipe and then save it to your
           history.
         </p>
+      ) : filteredRecipes.length === 0 ? (
+        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-muted text-center">
+          No recipes match this filter.
+        </p>
       ) : (
         <ul className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {savedRecipes.map((recipe) => (
+          {filteredRecipes.map((recipe) => (
             <li key={recipe.recipeId} className="flex min-h-0">
               <SavedRecipeCard
                 recipe={recipe}
