@@ -9,17 +9,19 @@ Single bilingual README for international and Italian reviewers.
 
 ## ENG VERSION
 
-Web application built with Next.js/React that recommends a recipe based on a 2-step form, with user feedback and local persistence.
+Web application built with Next.js/React that recommends a recipe using two search modes (Area flow and Name search), with user feedback and local persistence.
 
 ### 📋 Project goal
 
 This project was built as a coding interview exercise:
 
-- 2-step wizard (forward/back) with preserved state
+- 2-step wizard (forward/back) with preserved state for area-based flow
+- alternative first-step name search (top-5 live previews) with disabled step 2
 - recipe recommendation from an external API based on user-selected form parameters
 - Like/Dislike feedback persisted in `localStorage`
 - History page with saved preferences
-- at least one dynamic search/selection control
+- dynamic search while typing (debounced recipe-name search)
+- shareable filter state via query string (`mode`, `area`, `category`, `ingredients`, `name`)
 - loading, error, empty state, and fallback UI handling
 
 Reference API: [TheMealDB](https://www.themealdb.com/api.php)
@@ -90,7 +92,7 @@ Benefits:
 
 #### 2) State by responsibility
 
-- **Form flow state**: local reducer (step, area, category, ingredients)
+- **Form flow state**: local reducer (step, search mode, area, name query, category, ingredients)
 - **Recommendation state**: dedicated hook (fetch/retry/loading/error)
 - **History state**: persisted in `localStorage` with a shared key and utility layer
 
@@ -98,8 +100,8 @@ This avoids a monolithic reducer/global store and keeps tests simpler.
 
 #### 3) SSR + client split
 
-- `app/form/page.tsx` (Server Component): preloads metadata (areas/categories/ingredients)
-- `form-experience.tsx` (Client Component): runtime user interactions and local state
+- `app/form/page.tsx` (Server Component): preloads metadata + hydrates initial form state from query params
+- `form-experience.tsx` (Client Component): runtime interactions + URL sync (`router.replace`)
 
 #### 4) Reusable UI primitives
 
@@ -107,12 +109,14 @@ This avoids a monolithic reducer/global store and keeps tests simpler.
 - `MultiSelectField` uses Headless UI `Listbox` for multi-select ingredients.
 - `FeedbackDialog` uses Headless UI `Dialog` to confirm preference persistence updates.
 - `PreferenceFeedback` centralizes the “Did it match your preference?” Yes/No prompt.
+- Search mode selector uses Headless UI `RadioGroup`.
 
 #### 5) Persistence + history recap
 
 - `app/lib/utils/history.ts` centralizes localStorage logic with safe parsing/fallback.
 - History shows recap cards with timestamp, selected search inputs, like/dislike status, and preference updates.
 - Saved `inputs` reflect user-selected filters (`area/category/ingredients`), not the full recipe ingredient list.
+- Recipe details page also supports Like/Dislike save and shows current matched/disliked badge when already saved.
 
 #### 6) Responsive strategy
 
@@ -127,6 +131,7 @@ This avoids a monolithic reducer/global store and keeps tests simpler.
 - `list.php?c=list`
 - `list.php?i=list`
 - `filter.php?a={area}`
+- `search.php?s={name}`
 - `lookup.php?i={id}`
 
 Note: TheMealDB does not support combined filtering with multiple query params.  
@@ -180,18 +185,23 @@ Open [http://localhost:3000](http://localhost:3000).
 - [x] adapter layer for API normalization
 - [x] split form/suggested recipe layout
 - [x] responsive behavior (mobile stack + desktop split)
+- [x] search-mode selector (`area` vs `name`) with proper tab behavior
 - [x] single select (category) with placeholder
 - [x] ingredients multiselect with Headless UI Listbox
+- [x] live recipe-name search (debounced, top-5 previews)
 - [x] loading skeleton + error card with retry
 - [x] Like/Dislike persistence in `localStorage`
 - [x] feedback dialog after preference save/update
+- [x] recipe details page with save preference support
 - [x] complete History section with recap cards and latest-first sorting
+- [x] URL shareable state (SSR hydration + client sync)
 - [x] tests for selection logic and dynamic search
 
 ### 🧪 Current test coverage
 
 - `Card` and `Header`: smoke + base rendering tests
-- `useGetRecipes`: selection logic (`category/ingredients`), no-match, API error, dynamic filter updates
+- `useGetRecipes`: selection logic (`category/ingredients`), no-match, API error, mode-aware behavior
+- `FirstStep`, `DetailsFormSection`, `NameRecipeSearch`: search mode and dynamic search behavior
 
 ### ♿ Accessibility & UX
 
@@ -204,17 +214,19 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## ITA VERSION
 
-Applicazione web costruita con Next.js/React che raccomanda una ricetta in base a un form a 2 step, con feedback utente e persistenza locale.
+Applicazione web costruita con Next.js/React che raccomanda una ricetta tramite due modalità di ricerca (flow per area e ricerca per nome), con feedback utente e persistenza locale.
 
 ### 📋 Obiettivo del progetto
 
 Questo progetto nasce come coding interview:
 
-- wizard a 2 step (forward/back) con stato preservato
+- wizard a 2 step (forward/back) con stato preservato nel flow per area
+- ricerca alternativa nel primo step per nome ricetta (anteprime live top-5) con step 2 disabilitato
 - raccomandazione ricetta via API esterna in base ai parametri selezionati nel form
 - feedback Like/Dislike persistito in `localStorage`
 - Pagina di History con preferenze salvate
-- almeno un controllo di ricerca/selezione dinamica
+- ricerca dinamica durante digitazione (debounced su nome ricetta)
+- stato condivisibile via query string (`mode`, `area`, `category`, `ingredients`, `name`)
 - gestione loading, error, empty state e fallback UI
 
 API di riferimento: [TheMealDB](https://www.themealdb.com/api.php)
@@ -285,7 +297,7 @@ Vantaggi:
 
 #### 2) Stato per responsabilità
 
-- **Form flow state**: reducer locale (step, area, category, ingredients); ho scelto di non utilizzare uno state manager globale vista la natura molto piccola dell'applicativo.
+- **Form flow state**: reducer locale (step, search mode, area, name query, category, ingredients); ho scelto di non utilizzare uno state manager globale vista la natura molto piccola dell'applicativo.
 - **Recommendation state**: hook dedicato (fetch/retry/loading/error); tutta la responsabilità è delegata a questo hook in modo che la pagina JSX debba solo renderizzare i dati.
 - **History state**: i dati sono persistiti nel `localStorage` tramite una chiave comune e utility dedicate.
 
@@ -293,8 +305,8 @@ Questo evita un reducer monolitico che causa re-render dell'intero applicativo e
 
 #### 3) SSR + Client split
 
-- `app/form/page.tsx` (Server Component): fetch preventivo di categorie/metadata, render lato server e hydration lato client.
-- `form-experience.tsx` (Client Component): interazioni utente e stato runtime.
+- `app/form/page.tsx` (Server Component): fetch preventivo di categorie/metadata + hydration iniziale stato form da query params.
+- `form-experience.tsx` (Client Component): interazioni utente + sincronizzazione URL con `router.replace`.
 
 #### 4) UI primitives riutilizzabili
 
@@ -302,11 +314,13 @@ Questo evita un reducer monolitico che causa re-render dell'intero applicativo e
 - `MultiSelectField` usa `Listbox` di Headless UI per selezione multipla ingredienti.
 - `FeedbackDialog` usa `Dialog` di Headless UI per confermare il salvataggio preferenze.
 - `PreferenceFeedback` centralizza il prompt "Did it match your preference?".
+- Il selettore modalità ricerca usa `RadioGroup` di Headless UI.
 
 #### 5) Persistence + recap History
 
 - `app/lib/utils/history.ts` centralizza tutta la logica di gestione del local storage con parsing safe (fallback ad array vuoto in caso di dati mancanti/corrotti).
 - In History vengono mostrati recap card con timestamp, input usati nella ricerca, stato like/dislike ed è possibile aggiornare la preferenza.
+- Anche la pagina dettaglio ricetta supporta salvataggio Like/Dislike e mostra badge matched/disliked se la ricetta è già salvata.
 
 #### 6) Responsive strategy
 
@@ -321,6 +335,7 @@ Questo evita un reducer monolitico che causa re-render dell'intero applicativo e
 - `list.php?c=list`
 - `list.php?i=list`
 - `filter.php?a={area}`
+- `search.php?s={name}`
 - `lookup.php?i={id}`
 
 Nota: TheMealDB non prevede API di filtraggio combinato con parametri multipli; per questo è stato implementato un pre-fetch globale seguito da filtraggio locale, così da mostrare solo ricette coerenti con i filtri selezionati dall'utente.
@@ -373,18 +388,23 @@ Apri [http://localhost:3000](http://localhost:3000).
 - [x] adapter layer per normalizzazione API
 - [x] layout split form/suggested recipe
 - [x] responsive behavior (mobile stack + desktop split)
+- [x] selettore modalità ricerca (`area` vs `name`) con comportamento corretto dei tab
 - [x] select singola (category) con placeholder
 - [x] multiselect ingredienti con Headless UI Listbox
+- [x] ricerca live per nome ricetta (debounced, top-5 anteprime)
 - [x] loading skeleton + error card con retry
 - [x] salvataggio feedback Like/Dislike in `localStorage`
 - [x] feedback dialog dopo salvataggio preferenza
+- [x] pagina dettaglio con salvataggio preferenza
 - [x] History section completa con recap card e sorting latest-first
+- [x] stato condivisibile via URL (hydration SSR + sync client)
 - [x] test su selection logic e dynamic search
 
 ### 🧪 Test coverage (attuale)
 
 - `Card` e `Header`: smoke test + rendering base
-- `useGetRecipes`: selection logic (category/ingredients), no-match, errore API, aggiornamento dinamico filtri
+- `useGetRecipes`: selection logic (category/ingredients), no-match, errore API, comportamento mode-aware
+- `FirstStep`, `DetailsFormSection`, `NameRecipeSearch`: comportamento search mode e dynamic search
 
 ### ♿ Accessibilità e UX
 

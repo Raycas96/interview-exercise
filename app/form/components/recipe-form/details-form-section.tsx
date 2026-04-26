@@ -9,6 +9,7 @@ interface DetailsFormSectionProps {
   selectedIngredients: string[];
   onSelectCategory: (category: string) => void;
   onSelectIngredients: (ingredients: string[]) => void;
+  disabled?: boolean;
 }
 export const DetailsFormSection = ({
   categoriesList,
@@ -17,6 +18,7 @@ export const DetailsFormSection = ({
   selectedIngredients,
   onSelectCategory,
   onSelectIngredients,
+  disabled = false,
 }: DetailsFormSectionProps) => {
   return (
     <div className="w-full max-w-md px-4 flex flex-col gap-2">
@@ -30,6 +32,7 @@ export const DetailsFormSection = ({
           label: category.name,
         }))}
         onChange={onSelectCategory}
+        disabled={disabled}
       />
       <MultiSelectField
         label="Ingredients"
@@ -41,6 +44,7 @@ export const DetailsFormSection = ({
         }))}
         onChange={onSelectIngredients}
         placeholder="Select ingredients"
+        disabled={disabled}
       />
     </div>
   );

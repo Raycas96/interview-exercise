@@ -4,11 +4,15 @@ import {
   reducer,
   initialState,
   ActionType,
+  FormState,
 } from "../components/recipe-form/reducer";
 import { Area } from "@/app/lib/mealdb/types";
 
-export const useRecipeFromReducer = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+export const useRecipeFromReducer = (initialFormState?: FormState) => {
+  const [state, dispatch] = useReducer(
+    reducer,
+    initialFormState ?? initialState,
+  );
 
   const handleSelectArea = useCallback((area: Area) => {
     dispatch({ type: ActionType.SET_FIRST_STEP_AREA, payload: area.name });
@@ -28,10 +32,26 @@ export const useRecipeFromReducer = () => {
     });
   }, []);
 
+  const handleSearchModeChange = useCallback((searchMode: "area" | "name") => {
+    dispatch({
+      type: ActionType.SET_SEARCH_MODE,
+      payload: searchMode,
+    });
+  }, []);
+
+  const handleNameQueryChange = useCallback((query: string) => {
+    dispatch({
+      type: ActionType.SET_FIRST_STEP_NAME_QUERY,
+      payload: query,
+    });
+  }, []);
+
   return {
     state,
     handleSelectArea,
     handleSelectIngredients,
     handleSelectCategory,
+    handleSearchModeChange,
+    handleNameQueryChange,
   };
 };

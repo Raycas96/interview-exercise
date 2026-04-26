@@ -12,13 +12,17 @@ export enum ActionType {
   SET_ACTIVE_TAB = "SET_ACTIVE_TAB",
   SET_LOADING = "SET_LOADING",
   SET_ERROR = "SET_ERROR",
+  SET_SEARCH_MODE = "SET_SEARCH_MODE",
   SET_FIRST_STEP_AREA = "SET_FIRST_STEP_AREA",
-  SET_SECOND_STEP_INGREDIENT_QUERY = "SET_SECOND_STEP_INGREDIENT_QUERY",
+  SET_FIRST_STEP_NAME_QUERY = "SET_FIRST_STEP_NAME_QUERY",
   SET_SECOND_STEP_SELECTED_INGREDIENT = "SET_SECOND_STEP_SELECTED_INGREDIENT",
   SET_SECOND_STEP_SELECTED_CATEGORY = "SET_SECOND_STEP_SELECTED_CATEGORY",
+  HYDRATE_FROM_QUERY = "HYDRATE_FROM_QUERY",
   RESET_FLOW = "RESET_FLOW",
   CLEAR_ERROR = "CLEAR_ERROR",
 }
+
+export type SearchMode = "area" | "name";
 
 export type FormReducerAction =
   | {
@@ -38,7 +42,11 @@ export type FormReducerAction =
       payload: string;
     }
   | {
-      type: ActionType.SET_SECOND_STEP_INGREDIENT_QUERY;
+      type: ActionType.SET_SEARCH_MODE;
+      payload: SearchMode;
+    }
+  | {
+      type: ActionType.SET_FIRST_STEP_NAME_QUERY;
       payload: string;
     }
   | {
@@ -55,6 +63,22 @@ export type FormReducerAction =
   | {
       type: ActionType.CLEAR_ERROR;
     };
+type HydratePayload = {
+  searchMode: SearchMode;
+  area: string | null;
+  nameQuery: string;
+  selectedCategory: string | null;
+  selectedIngredients: string[];
+};
+
+export type FormReducerHydrateAction = {
+  type: ActionType.HYDRATE_FROM_QUERY;
+  payload: HydratePayload;
+};
+
+export type FullFormReducerAction =
+  | FormReducerAction
+  | FormReducerHydrateAction;
 
 export interface FormState {
   activeTab: TabName;
@@ -62,9 +86,10 @@ export interface FormState {
   error: string | null;
   firstStep: {
     area: string | null;
+    searchMode: SearchMode;
+    nameQuery: string;
   };
   secondStep: {
-    ingredientQuery: string | null;
     selectedIngredients: string[];
     selectedCategory: string | null;
   };
@@ -76,15 +101,16 @@ export const initialState: FormState = {
   error: null,
   firstStep: {
     area: null,
+    searchMode: "area",
+    nameQuery: "",
   },
   secondStep: {
-    ingredientQuery: null,
     selectedIngredients: [],
     selectedCategory: null,
   },
 };
 
-export const reducer = (state: FormState, action: FormReducerAction) => {
+export const reducer = (state: FormState, action: FullFormReducerAction) => {
   switch (action.type) {
     case "SET_ACTIVE_TAB":
       return { ...state, activeTab: action.payload };
@@ -99,10 +125,29 @@ export const reducer = (state: FormState, action: FormReducerAction) => {
         ...state,
         firstStep: { ...state.firstStep, area: action.payload },
       };
-    case "SET_SECOND_STEP_INGREDIENT_QUERY":
+    case "SET_SEARCH_MODE":
       return {
         ...state,
-        secondStep: { ...state.secondStep, ingredientQuery: action.payload },
+        activeTab:
+          action.payload === "name" ? ("Area" as TabName) : state.activeTab,
+        firstStep: {
+          ...state.firstStep,
+          searchMode: action.payload,
+          area: action.payload === "name" ? null : state.firstStep.area,
+          nameQuery: action.payload === "area" ? "" : state.firstStep.nameQuery,
+        },
+        secondStep:
+          action.payload === "name"
+            ? {
+                selectedIngredients: [],
+                selectedCategory: null,
+              }
+            : state.secondStep,
+      };
+    case "SET_FIRST_STEP_NAME_QUERY":
+      return {
+        ...state,
+        firstStep: { ...state.firstStep, nameQuery: action.payload },
       };
     case "SET_SECOND_STEP_SELECTED_INGREDIENT":
       return {
@@ -117,13 +162,39 @@ export const reducer = (state: FormState, action: FormReducerAction) => {
         ...state,
         secondStep: { ...state.secondStep, selectedCategory: action.payload },
       };
+    case "HYDRATE_FROM_QUERY":
+      return {
+        ...state,
+        firstStep: {
+          area:
+            action.payload.searchMode === "area" ? action.payload.area : null,
+          searchMode: action.payload.searchMode,
+          nameQuery:
+            action.payload.searchMode === "name"
+              ? action.payload.nameQuery
+              : "",
+        },
+        secondStep:
+          action.payload.searchMode === "area"
+            ? {
+                selectedCategory: action.payload.selectedCategory,
+                selectedIngredients: action.payload.selectedIngredients,
+              }
+            : {
+                selectedCategory: null,
+                selectedIngredients: [],
+              },
+      };
     case "RESET_FLOW":
       return {
         ...state,
         activeTab: "Area" as TabName,
-        firstStep: { area: null },
+        firstStep: {
+          area: null,
+          searchMode: "area" as SearchMode,
+          nameQuery: "",
+        },
         secondStep: {
-          ingredientQuery: null,
           selectedIngredients: [],
           selectedCategory: null,
         },

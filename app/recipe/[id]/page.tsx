@@ -7,6 +7,7 @@ import { RecipeActions } from "./components/recipe-actions";
 import { RecipeIngredientsSection } from "./components/recipe-ingredients-section";
 import { RecipeInstructionsSection } from "./components/recipe-instructions-section";
 import { RecipeMetaBadges } from "@/components/recipe-meta-badges";
+import { SaveRecipeFromDetails } from "./components/save-recipe-from-details";
 
 interface RecipeDetailsPageProps {
   params: Promise<{
@@ -39,6 +40,7 @@ export default async function RecipeDetailsPage({
           <RecipeMetaBadges area={recipe.area} category={recipe.category} />
           <RecipeIngredientsSection ingredients={recipe.ingredients} />
           <RecipeInstructionsSection instructions={recipe.instructions} />
+          <SaveRecipeFromDetails recipe={recipe} />
           <RecipeActions />
         </div>
       </Card>

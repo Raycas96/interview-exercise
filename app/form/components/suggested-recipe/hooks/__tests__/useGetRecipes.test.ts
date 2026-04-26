@@ -21,6 +21,7 @@ describe("useGetRecipes", () => {
 
     const { result } = renderHook(() =>
       useGetRecipes({
+        searchMode: "area",
         area: "Italian",
         category: "Pasta",
         ingredients: ["Tomato"],
@@ -47,6 +48,7 @@ describe("useGetRecipes", () => {
     const { result, rerender } = renderHook(
       ({ category, ingredients }) =>
         useGetRecipes({
+          searchMode: "area",
           area: "Indian",
           category,
           ingredients,
@@ -78,6 +80,7 @@ describe("useGetRecipes", () => {
 
     const { result } = renderHook(() =>
       useGetRecipes({
+        searchMode: "area",
         area: "Indian",
         category: null,
         ingredients: [],
@@ -103,6 +106,7 @@ describe("useGetRecipes", () => {
 
     const { result } = renderHook(() =>
       useGetRecipes({
+        searchMode: "area",
         area: "Indian",
         category: "Seafood",
         ingredients: ["Salmon"],
@@ -120,6 +124,7 @@ describe("useGetRecipes", () => {
 
     const { result } = renderHook(() =>
       useGetRecipes({
+        searchMode: "area",
         area: "Indian",
         category: null,
         ingredients: [],
@@ -139,6 +144,7 @@ describe("useGetRecipes", () => {
 
     const { result } = renderHook(() =>
       useGetRecipes({
+        searchMode: "area",
         area: "Indian",
         category: null,
         ingredients: [],
@@ -149,5 +155,26 @@ describe("useGetRecipes", () => {
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
     });
+  });
+
+  it("uses selected recipe override in name mode", async () => {
+    mockedGetRecipesByArea.mockResolvedValue(RECIPES_FIXTURE);
+
+    const { result } = renderHook(() =>
+      useGetRecipes({
+        searchMode: "name",
+        area: null,
+        category: null,
+        ingredients: [],
+        selectedRecipeOverride: RECIPES_FIXTURE[1],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.selectedRecipe?.id).toBe("2");
+      expect(result.current.canSuggestAnother).toBe(false);
+    });
+
+    expect(mockedGetRecipesByArea).not.toHaveBeenCalled();
   });
 });

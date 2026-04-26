@@ -1,5 +1,5 @@
 import { Card } from "@/app/components/card";
-import { Skeleton } from "@/app/components/skeleton/skeleton";
+import { Skeleton } from "@/components/skeleton";
 
 export const SkeletonRecipeCard = () => {
   return (

@@ -6,15 +6,20 @@ import { Button } from "@/components/button";
 import { RecipeCard } from "./components/recipe-card";
 import { NoRecipeCard } from "./components/no-recipe-card";
 
+import { Recipe } from "@/lib/mealdb/types";
 interface SuggestedRecipeProps {
+  searchMode: "area" | "name";
   area: string | null;
   category: string | null;
   ingredients: string[];
+  selectedNameRecipe: Recipe | null;
 }
 export const SuggestedRecipe = ({
+  searchMode,
   area,
   category,
   ingredients,
+  selectedNameRecipe,
 }: SuggestedRecipeProps) => {
   const {
     loading,
@@ -24,11 +29,14 @@ export const SuggestedRecipe = ({
     suggestAnother,
     canSuggestAnother,
   } = useGetRecipes({
+    searchMode,
     area,
     category,
     ingredients,
+    selectedRecipeOverride: selectedNameRecipe,
   });
-  if (!area) {
+
+  if (searchMode === "area" && !area) {
     return <NoAreaCard />;
   }
 
@@ -53,6 +61,15 @@ export const SuggestedRecipe = ({
     );
   }
 
+  if (searchMode === "name" && !selectedRecipe) {
+    return (
+      <Card
+        title="Pick a recipe by name"
+        description="Choose one recipe from the name preview list to show it here."
+      />
+    );
+  }
+
   if (!selectedRecipe) {
     return <NoRecipeCard />;
   }
@@ -66,7 +83,7 @@ export const SuggestedRecipe = ({
         recipe={selectedRecipe}
         selectedInputs={{ area, category, ingredients }}
         onNewIdea={suggestAnother}
-        showNewIdea={canSuggestAnother}
+        showNewIdea={searchMode === "area" && canSuggestAnother}
       />
     </div>
   );

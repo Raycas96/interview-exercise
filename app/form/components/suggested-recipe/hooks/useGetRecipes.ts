@@ -4,14 +4,18 @@ import { isAbortError } from "@/lib/api/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface UseGetRecipesProps {
+  searchMode: "area" | "name";
   area: string | null;
   category: string | null;
   ingredients: string[];
+  selectedRecipeOverride?: Recipe | null;
 }
 export const useGetRecipes = ({
+  searchMode,
   area,
   category,
   ingredients,
+  selectedRecipeOverride = null,
 }: UseGetRecipesProps) => {
   const [loading, setLoading] = useState(false);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -21,7 +25,7 @@ export const useGetRecipes = ({
 
   const fetchRecipes = useCallback(
     async (requestInit?: RequestInit) => {
-      if (!area) {
+      if (!area || searchMode !== "area") {
         return;
       }
 
@@ -52,12 +56,12 @@ export const useGetRecipes = ({
         }
       }
     },
-    [area],
+    [area, searchMode],
   );
 
   // effect to fetch the recipes based on the area
   useEffect(() => {
-    if (!area) {
+    if (!area || searchMode !== "area") {
       return;
     }
     const abortController = new AbortController();
@@ -68,7 +72,7 @@ export const useGetRecipes = ({
     return () => {
       abortController.abort();
     };
-  }, [area, fetchRecipes]);
+  }, [area, fetchRecipes, searchMode]);
 
   const filteredRecipes = useMemo(() => {
     return recipes.filter((recipe) => {
@@ -117,26 +121,33 @@ export const useGetRecipes = ({
 
   // effect to select one recipe when filters change
   useEffect(() => {
+    if (searchMode !== "area") {
+      return;
+    }
     queueMicrotask(() => {
       pickRandomRecipe(selectedRecipe?.id);
     });
     // in this case we do not need the full array otherwhise we got an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickRandomRecipe]);
+  }, [pickRandomRecipe, searchMode]);
 
   const suggestAnother = useCallback(() => {
+    if (searchMode !== "area") {
+      return;
+    }
     const currentId = selectedRecipe?.id;
     if (currentId) {
       pickRandomRecipe(currentId);
     }
-  }, [pickRandomRecipe, selectedRecipe?.id]);
+  }, [pickRandomRecipe, searchMode, selectedRecipe?.id]);
 
   return {
     loading,
     error,
     retry: fetchRecipes,
-    selectedRecipe,
+    selectedRecipe:
+      searchMode === "name" ? (selectedRecipeOverride ?? null) : selectedRecipe,
     suggestAnother,
-    canSuggestAnother: filteredRecipes.length > 1,
+    canSuggestAnother: searchMode === "area" && filteredRecipes.length > 1,
   };
 };
