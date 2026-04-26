@@ -1,5 +1,5 @@
 import { Card } from "@/app/components/card";
-import { Recipe } from "@/app/lib/mealdb/types";
+import { Recipe } from "@/lib/mealdb/types";
 import {
   Disclosure,
   DisclosureButton,

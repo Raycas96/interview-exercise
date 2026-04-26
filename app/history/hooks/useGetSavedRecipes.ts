@@ -2,8 +2,8 @@ import {
   getStoredHistoryRecipes,
   sortHistoryByLatest,
   updateRecipeFeedbackInHistory,
-} from "@/app/lib/utils/history";
-import { HistoryRecipe } from "@/app/lib/utils/types";
+} from "@/utils/history";
+import { HistoryRecipe } from "@/utils/types";
 import { useCallback, useEffect, useState } from "react";
 
 export const useGetSavedRecipes = () => {

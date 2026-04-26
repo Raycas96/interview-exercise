@@ -1,6 +1,6 @@
 import { SelectField } from "@/app/components/select-field";
 import { MultiSelectField } from "@/app/components/multi-select-field";
-import { Category, Ingredient } from "@/app/lib/mealdb/types";
+import { Category, Ingredient } from "@/lib/mealdb/types";
 
 interface DetailsFormSectionProps {
   categoriesList: Category[];

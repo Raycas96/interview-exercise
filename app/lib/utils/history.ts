@@ -1,6 +1,6 @@
-import { Recipe } from "@/app/lib/mealdb/types";
-import { LOCAL_STORAGE_HISTORY_KEY } from "@/app/lib/utils/constants";
-import { HistoryRecipe } from "@/app/lib/utils/types";
+import { Recipe } from "@/lib/mealdb/types";
+import { LOCAL_STORAGE_HISTORY_KEY } from "@/utils/constants";
+import { HistoryRecipe } from "@/utils/types";
 
 const isHistoryRecipe = (value: unknown): value is HistoryRecipe => {
   return (

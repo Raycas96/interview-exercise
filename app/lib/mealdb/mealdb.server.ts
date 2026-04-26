@@ -96,7 +96,9 @@ export async function getRecipesByArea(
 }
 
 export async function getRecipeById(id: string) {
-  return fetchTheMealDbData<MealDbRecipesResponse>(`/lookup.php?i=${id}`);
+  return fetchTheMealDbData<MealDbRecipesResponse>(
+    `/lookup.php?i=${encodeURIComponent(id)}`,
+  );
 }
 
 export async function getRecipesByName(name: string) {

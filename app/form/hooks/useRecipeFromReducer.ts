@@ -6,7 +6,7 @@ import {
   ActionType,
   FormState,
 } from "../components/recipe-form/reducer";
-import { Area } from "@/app/lib/mealdb/types";
+import { Area } from "@/lib/mealdb/types";
 
 export const useRecipeFromReducer = (initialFormState?: FormState) => {
   const [state, dispatch] = useReducer(
