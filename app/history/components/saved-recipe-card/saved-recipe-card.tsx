@@ -3,10 +3,11 @@
 import { Card } from "@/app/components/card";
 import { FeedbackDialog } from "@/app/components/feedback-dialog";
 import { PreferenceFeedback } from "@/app/components/preference-feedback";
-import { formatDate } from "@/utils/date";
 import { HistoryRecipe } from "@/utils/types";
 import { useMemo, useState } from "react";
 import { FallbackImage } from "@/components/fallback-image";
+import Link from "next/link";
+import { SavedRecipeInputsSummary, SavedRecipeMeta } from "./components";
 
 interface SavedRecipeCardProps {
   recipe: HistoryRecipe;
@@ -56,33 +57,16 @@ export const SavedRecipeCard = ({
           sizes="(min-width: 1024px) 280px, (min-width: 768px) 45vw, 100vw"
         />
 
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full bg-brand/15 px-2 py-1 text-brand">
-            Saved on {formatDate(recipe.timestamp)}
-          </span>
-          <span
-            className={
-              liked
-                ? "rounded-full bg-brand/15 px-2 py-1 text-action"
-                : "rounded-full bg-action/15 px-2 py-1 text-brand"
-            }
-          >
-            {liked ? "Matched preference" : "Did not match"}
-          </span>
-        </div>
+        <SavedRecipeMeta timestamp={recipe.timestamp} liked={liked} />
+        <SavedRecipeInputsSummary inputsSummary={inputsSummary} />
 
-        <div className="rounded-xl border border-border/80 p-2.5">
-          <p className="text-xs font-medium text-foreground sm:text-sm">
-            Inputs used
-          </p>
-          <ul className="mt-2 space-y-1 text-xs text-muted sm:text-sm">
-            {inputsSummary.map((input) => (
-              <li key={input.label}>
-                <span className="text-foreground">{input.label}:</span>{" "}
-                {input.value}
-              </li>
-            ))}
-          </ul>
+        <div className="flex justify-center">
+          <Link
+            href={`/recipe/${recipe.recipeId}`}
+            className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface"
+          >
+            View details
+          </Link>
         </div>
 
         <PreferenceFeedback
