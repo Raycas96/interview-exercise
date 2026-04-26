@@ -98,8 +98,6 @@ export interface Recipe {
   category: string;
   area: string;
   instructions: string;
-  tags: string | null;
-  youtubeUrl: string | null;
   ingredients: {
     name: string;
     measure: string | null;

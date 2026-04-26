@@ -22,8 +22,12 @@ const formatIngredients = (recipe: MealDbRecipe): Recipe["ingredients"] => {
 
 export const fromMealDbRecipesResponseToRecipes = (
   recipes: MealDbRecipesResponse,
-): Recipe[] =>
-  recipes.meals?.map((recipe) => ({
+): Recipe[] => {
+  if (!Array.isArray(recipes.meals)) {
+    return [];
+  }
+
+  return recipes.meals.map((recipe) => ({
     id: recipe.idMeal,
     name: recipe.strMeal,
     alternateName: recipe.strMealAlternate,
@@ -31,7 +35,6 @@ export const fromMealDbRecipesResponseToRecipes = (
     category: recipe.strCategory,
     area: recipe.strArea,
     instructions: recipe.strInstructions,
-    tags: recipe.strTags,
-    youtubeUrl: recipe.strYoutube,
     ingredients: formatIngredients(recipe),
-  })) ?? [];
+  }));
+};
