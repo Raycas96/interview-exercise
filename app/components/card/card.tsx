@@ -3,10 +3,7 @@ import clsx from "clsx";
 import type { CardElevation, CardPadding, CardTone } from "./card.variants";
 import { elevationClasses, paddingClasses, toneClasses } from "./card.variants";
 
-type CardProps = Omit<
-  ComponentPropsWithoutRef<"section">,
-  "className" | "title"
-> & {
+type CardProps = Omit<ComponentPropsWithoutRef<"section">, "title"> & {
   title: ReactNode;
   titleAs?: ElementType;
   description?: ReactNode;
@@ -27,6 +24,7 @@ export function Card({
   elevation = "sm",
   bordered = true,
   children,
+  className,
   ...props
 }: CardProps) {
   return (
@@ -38,10 +36,11 @@ export function Card({
         paddingClasses[padding],
         elevationClasses[elevation],
         bordered && "border border-border",
+        className,
       )}
       {...props}
     >
-      <header className="mb-4 flex items-start justify-between gap-4">
+      <header className="mb-4 flex shrink-0 items-start justify-between gap-4">
         <div className="min-w-0 flex-1 space-y-1">
           {title ? (
             <TitleTag className="flex justify-center text-lg font-semibold text-foreground">
@@ -55,7 +54,7 @@ export function Card({
         {actions ? <div className="shrink-0">{actions}</div> : null}
       </header>
 
-      {children}
+      <div className="flex min-h-0 flex-1 flex-col">{children}</div>
     </section>
   );
 }

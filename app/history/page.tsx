@@ -37,9 +37,9 @@ export default function History() {
           history.
         </p>
       ) : (
-        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 lg:grid-cols-4">
           {savedRecipes.map((recipe) => (
-            <li key={recipe.recipeId}>
+            <li key={recipe.recipeId} className="flex min-h-0">
               <SavedRecipeCard
                 recipe={recipe}
                 onPreferenceChange={updateRecipePreference}

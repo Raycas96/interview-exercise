@@ -4,13 +4,16 @@ import { describe, expect, it, vi } from "vitest";
 import { FallbackImage } from "./fallback-image";
 
 vi.mock("next/image", () => ({
-  default: ({
-    fill: _fill,
-    ...props
-  }: ImgHTMLAttributes<HTMLImageElement> & { fill?: boolean }) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img {...props} alt={props.alt} />
-  ),
+  default: (
+    props: ImgHTMLAttributes<HTMLImageElement> & { fill?: boolean },
+  ) => {
+    const { fill, ...rest } = props;
+    void fill;
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img {...rest} alt={rest.alt} />
+    );
+  },
 }));
 
 describe("FallbackImage", () => {
