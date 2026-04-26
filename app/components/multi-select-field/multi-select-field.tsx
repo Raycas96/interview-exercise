@@ -23,6 +23,7 @@ interface MultiSelectFieldProps {
   onChange: (value: string[]) => void;
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export function MultiSelectField({
@@ -33,6 +34,7 @@ export function MultiSelectField({
   onChange,
   placeholder = "Select options",
   className,
+  disabled = false,
 }: MultiSelectFieldProps) {
   return (
     <Field>
@@ -43,9 +45,9 @@ export function MultiSelectField({
         </Description>
       ) : null}
 
-      <Listbox value={value} onChange={onChange} multiple>
+      <Listbox value={value} onChange={onChange} multiple disabled={disabled}>
         <div className={clsx("relative mt-3", className)}>
-          <ListboxButton className="flex w-full items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-left text-sm/6 text-white focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25">
+          <ListboxButton className="flex w-full items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-left text-sm/6 text-white focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25 disabled:cursor-not-allowed disabled:opacity-50">
             <span className="truncate">
               {value.length > 0
                 ? options

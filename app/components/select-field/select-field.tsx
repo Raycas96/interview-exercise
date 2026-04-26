@@ -15,6 +15,7 @@ interface SelectFieldProps {
   value?: string;
   onChange: (value: string) => void;
   className?: string;
+  disabled?: boolean;
 }
 export function SelectField({
   label,
@@ -24,6 +25,7 @@ export function SelectField({
   value,
   onChange,
   className,
+  disabled = false,
 }: SelectFieldProps) {
   return (
     <Field>
@@ -37,9 +39,10 @@ export function SelectField({
         <Select
           value={value ?? ""}
           onChange={(event) => onChange(event.currentTarget.value)}
+          disabled={disabled}
           className={clsx(
             "mt-3 block w-full appearance-none rounded-lg border-none bg-white/5 px-3 py-1.5 text-sm/6 text-white",
-            "focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25",
+            "focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25 disabled:cursor-not-allowed disabled:opacity-50",
             "*:text-black",
           )}
         >

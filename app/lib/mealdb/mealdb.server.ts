@@ -99,6 +99,12 @@ export async function getRecipeById(id: string) {
   return fetchTheMealDbData<MealDbRecipesResponse>(`/lookup.php?i=${id}`);
 }
 
+export async function getRecipesByName(name: string) {
+  return fetchTheMealDbData<MealDbRecipesResponse>(
+    `/search.php?s=${encodeURIComponent(name)}`,
+  );
+}
+
 async function runWithConcurrencyLimit<T>(
   tasks: Array<() => Promise<T>>,
   maxConcurrency: number,
