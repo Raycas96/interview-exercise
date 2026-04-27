@@ -9,6 +9,7 @@ const emptySubscribe = () => () => {};
 
 export const useGetSavedRecipes = () => {
   const [, setVersion] = useState(0);
+  // added this just to prevent hydratation server missmatch
   const isHydrated = useSyncExternalStore(
     emptySubscribe,
     () => true,

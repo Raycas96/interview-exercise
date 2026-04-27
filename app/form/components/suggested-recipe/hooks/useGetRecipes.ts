@@ -118,16 +118,32 @@ export const useGetRecipes = ({
     [filteredRecipes],
   );
 
-  // effect to select one recipe when filters change
+  // Keep selected recipe stable when current one still matches filters.
   useEffect(() => {
     if (searchMode !== "area") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedRecipe(null);
       return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    pickRandomRecipe(selectedRecipe?.id);
-    // in this case we do not need the full array otherwhise we got an infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickRandomRecipe, searchMode]);
+
+    setSelectedRecipe((prevSelected) => {
+      if (filteredRecipes.length === 0) {
+        return null;
+      }
+      if (filteredRecipes.length === 1) {
+        return filteredRecipes[0];
+      }
+      if (
+        prevSelected &&
+        filteredRecipes.some((recipe) => recipe.id === prevSelected.id)
+      ) {
+        return prevSelected;
+      }
+      return filteredRecipes[
+        Math.floor(Math.random() * filteredRecipes.length)
+      ];
+    });
+  }, [filteredRecipes, searchMode]);
 
   const suggestAnother = useCallback(() => {
     if (searchMode !== "area") {
