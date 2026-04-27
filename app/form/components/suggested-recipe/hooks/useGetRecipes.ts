@@ -22,6 +22,13 @@ export const useGetRecipes = ({
   const [error, setError] = useState<string | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const requestIdRef = useRef(0);
+  const includesIngredient = (
+    recipeIngredientName: string,
+    selectedIngredient: string,
+  ) =>
+    recipeIngredientName
+      .toLocaleLowerCase()
+      .includes(selectedIngredient.toLocaleLowerCase());
 
   const fetchRecipes = useCallback(
     async (requestInit?: RequestInit) => {
@@ -79,7 +86,9 @@ export const useGetRecipes = ({
         return (
           recipe.category === category &&
           ingredients.every((selectedIngredient) =>
-            recipe.ingredients.some((i) => i.name === selectedIngredient),
+            recipe.ingredients.some((i) =>
+              includesIngredient(i.name, selectedIngredient),
+            ),
           )
         );
       }
@@ -88,7 +97,9 @@ export const useGetRecipes = ({
       }
       if (ingredients.length > 0) {
         return ingredients.every((selectedIngredient) =>
-          recipe.ingredients.some((i) => i.name === selectedIngredient),
+          recipe.ingredients.some((i) =>
+            includesIngredient(i.name, selectedIngredient),
+          ),
         );
       }
       return true;
