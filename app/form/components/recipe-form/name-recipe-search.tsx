@@ -1,8 +1,8 @@
-import { Recipe } from "@/lib/mealdb/types";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getRecipesByName } from "@/lib/mealdb/client/get-recipes-by-name";
+import { Recipe } from "@/lib/mealdb/types";
 
 interface NameRecipeSearchProps {
   query: string;
@@ -18,17 +18,22 @@ export const NameRecipeSearch = ({
   const [nameResults, setNameResults] = useState<Recipe[]>([]);
   const [nameSearchLoading, setNameSearchLoading] = useState(false);
   const [nameSearchError, setNameSearchError] = useState<string | null>(null);
+
   const debouncedRecipeNameQuery = useDebouncedValue(query, 300);
+
+  const isQueryTooShort = debouncedRecipeNameQuery.trim().length < 2;
+
+  const displayResults = isQueryTooShort ? [] : nameResults;
+  const displayLoading = isQueryTooShort ? false : nameSearchLoading;
+  const displayError = isQueryTooShort ? null : nameSearchError;
 
   useEffect(() => {
     const trimmed = debouncedRecipeNameQuery.trim();
+
     if (trimmed.length < 2) {
-      queueMicrotask(() => {
-        setNameResults([]);
-        setNameSearchError(null);
-        setNameSearchLoading(false);
-        onRecipeSelect(null);
-      });
+      // 3. ONLY call the parent updater.
+      // We removed ALL local synchronous setStates to fix the linter error!
+      onRecipeSelect(null);
       return;
     }
 
@@ -58,6 +63,7 @@ export const NameRecipeSearch = ({
     };
 
     void searchByName();
+
     return () => {
       abortController.abort();
     };
@@ -82,16 +88,20 @@ export const NameRecipeSearch = ({
         placeholder="e.g. Arrabiata"
         className="mt-3 w-full rounded-lg bg-white/5 px-3 py-2 text-sm/6 text-white placeholder:text-white/40 focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-white/25"
       />
-      {nameSearchLoading ? (
+
+      {/* 5. Use the derived state variables here instead of the raw state */}
+      {displayLoading ? (
         <p className="mt-2 text-sm text-muted">Searching recipes...</p>
       ) : null}
-      {nameSearchError ? (
-        <p className="mt-2 text-sm text-action">{nameSearchError}</p>
+
+      {displayError ? (
+        <p className="mt-2 text-sm text-action">{displayError}</p>
       ) : null}
-      {query.trim().length >= 2 && !nameSearchLoading && !nameSearchError ? (
-        nameResults.length > 0 ? (
+
+      {!isQueryTooShort && !displayLoading && !displayError ? (
+        displayResults.length > 0 ? (
           <ul className="mt-2 space-y-1 text-sm text-foreground">
-            {nameResults.map((recipe) => (
+            {displayResults.map((recipe) => (
               <li
                 key={recipe.id}
                 className="flex items-center justify-between gap-2"

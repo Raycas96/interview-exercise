@@ -65,9 +65,8 @@ export const useGetRecipes = ({
       return;
     }
     const abortController = new AbortController();
-    queueMicrotask(() => {
-      void fetchRecipes({ signal: abortController.signal });
-    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchRecipes({ signal: abortController.signal });
 
     return () => {
       abortController.abort();
@@ -124,9 +123,8 @@ export const useGetRecipes = ({
     if (searchMode !== "area") {
       return;
     }
-    queueMicrotask(() => {
-      pickRandomRecipe(selectedRecipe?.id);
-    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    pickRandomRecipe(selectedRecipe?.id);
     // in this case we do not need the full array otherwhise we got an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickRandomRecipe, searchMode]);

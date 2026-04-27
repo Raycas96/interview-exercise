@@ -3,22 +3,26 @@ import {
   sortHistoryByLatest,
   updateRecipeFeedbackInHistory,
 } from "@/utils/history";
-import { HistoryRecipe } from "@/utils/types";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
+
+const emptySubscribe = () => () => {};
 
 export const useGetSavedRecipes = () => {
-  const [savedRecipes, setSavedRecipes] = useState<HistoryRecipe[]>([]);
+  const [, setVersion] = useState(0);
+  const isHydrated = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
-  useEffect(() => {
-    queueMicrotask(() => {
-      setSavedRecipes(getStoredHistoryRecipes().sort(sortHistoryByLatest));
-    });
-  }, []);
+  const savedRecipes = isHydrated
+    ? getStoredHistoryRecipes().sort(sortHistoryByLatest)
+    : [];
 
   const updateRecipePreference = useCallback(
     (recipeId: string, liked: boolean) => {
-      const updatedRecipes = updateRecipeFeedbackInHistory(recipeId, liked);
-      setSavedRecipes(updatedRecipes);
+      updateRecipeFeedbackInHistory(recipeId, liked);
+      setVersion((value) => value + 1);
     },
     [],
   );
